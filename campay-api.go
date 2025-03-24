@@ -3,12 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"fmt" // for formating of terminal output
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/joho/godotenv"
+	"github.com/joho/godotenv" 
 )
 
 // This function loads the api key from the .env file
@@ -33,7 +32,7 @@ func run() (string, error) {
 func requestPayment() (string, string) {
 
 	//url to request payment using campay
-	baseurl := "https://demo.campay.net/api/collect/"
+	baseurl := "https://demo.campay.net/api/collect/" // Put this in an evn file
 
 	//load the api-key from the .env file, handle errors if they occur
 	key, err := run()
@@ -53,32 +52,7 @@ func requestPayment() (string, string) {
 		External_reference string `json:"external_reference"`
 	}
 
-	//ask users to enter payment details
-	var amount string
-	var number string
-	var description string
-	var reference string
-
-	currency := "XAF"
-
-	fmt.Println("enter amount")
-	fmt.Scanln(&amount)
-
-	fmt.Println("enter number")
-	fmt.Scanln(&number)
-
-	fmt.Println("enter description")
-	fmt.Scanln(&description)
-
-	fmt.Println("enter reference")
-	fmt.Scanln(&reference)
-
-	//create an instance of the struct with the payment details
-	requestData := data{
-		Amount:             amount,
-		Currency:           currency,
-		From:               number,
-		Description:        description,
+	fDescription:        description,
 		External_reference: reference,
 	}
 
@@ -137,7 +111,7 @@ func checkTransactionStatus() {
 	transactionReference, key := requestPayment()
 
 	//now check the transaction staatus
-	statusUrl := fmt.Sprintf("https://demo.campay.net/api/transaction/%v", transactionReference)
+	statusUrl := fmt.Sprintf("https://demo.campay.net/api/transaction/%v", transactionReference) // Put https://demo.campay.net/api/transaction/$somethis into the env file as well.
 
 	request, err := http.NewRequest("GET", statusUrl, nil)
 	if err != nil {
@@ -152,6 +126,7 @@ func checkTransactionStatus() {
 		fmt.Println("error:", err)
 	}
 
+	// put all of this in a globla form and merge it with that of 48 - 53
 	var output struct {
 		Reference          string `json:"reference"`
 		Status             string `json:"status"`

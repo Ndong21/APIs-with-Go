@@ -18,7 +18,7 @@ The function takes 2 arguments
 The function returns the transaction status of the specified trasaction
 */
 
-func CheckTransactionStatus(reference string, output Data) {
+func CheckTransactionStatus(reference string, output Data) string {
 
 	//load the api-key from the .env file, handle errors if they occur
 	key, baseUrl, err := LoadCredentials()
@@ -48,6 +48,8 @@ func CheckTransactionStatus(reference string, output Data) {
 	json.NewDecoder(response.Body).Decode(&output)
 	transactionStatus := output.Status
 
-	time.Sleep(60 * time.Second)
+	time.Sleep(180 * time.Second)
 	fmt.Println("transaction Status", transactionStatus)
+
+	return transactionStatus
 }

@@ -3,11 +3,16 @@ package main
 import (
 	"fmt"
 
+	_ "github.com/lib/pq"
+
 	//import the package "utility"
+	// . "example.com/api/db"
 	. "example.com/api/utility" // using . infront helps us omit the package name when calling the exported identifiers(fxns and variables)
 )
 
 func main() {
+	// //connect to database.
+	// Db := DBconnect()
 
 	//ask users to enter payment details
 	var amount string
@@ -43,12 +48,13 @@ func main() {
 	var output Data // output will be used to store the response from the checktransactionstatus function
 
 	//get the transaction reference from the requestpayment function
-	transactionReference := RequestPayment(requestData, result)
+	// transactionReference :=
+	RequestPayment(requestData, result, output)
 
 	fmt.Println("Payment request successfully initiated")
 	fmt.Println("Now checking the status of the transaction")
 	fmt.Println(".........")
 
-	//check the transaction status of the operation
-	CheckTransactionStatus(transactionReference, output)
+	// //check the transaction status of the operation
+	// CheckTransactionStatus(transactionReference, output)
 }

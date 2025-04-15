@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	. "example.com/api/db"
 )
 
 /*
@@ -19,7 +21,10 @@ It returns the reference of the transaction which is then used to check the tran
 */
 
 // This function initiates a payment request
-func RequestPayment(requestData, result Data) string {
+func RequestPayment(requestData, result, output Data) string {
+
+	//connect to DB
+	Db := DBconnect()
 
 	//load the api-key from the .env file, handle errors if they occur
 	key, baseUrl, err := LoadCredentials()
@@ -65,8 +70,27 @@ func RequestPayment(requestData, result Data) string {
 	// decode the body of the response to a readable format using the sresult tructs
 	json.NewDecoder(resp.Body).Decode(&result)
 
+	sqlStatement := `
+	INSERT INTO transactions (amount, currency, number, description, reference, status)
+	VALUES ($1,$2,$3,$4,$5,$6)
+	`
+	_, err = Db.Exec(sqlStatement, requestData.Amount, requestData.Currency, requestData.From, requestData.Description, result.Reference, "Pending")
+	if err != nil {
+		panic("couldn't insert")
+	}
 	//obtain the transaction reference from the response body
 	//this reference will be used to check the status of the transaction
-	return result.Reference
+	ref := result.Reference
 
+	status := CheckTransactionStatus(ref, output)
+
+	sqlStatement2 := `
+	UPDATE transactions
+	SET status = $1
+	`
+	_, err = Db.Exec(sqlStatement2, status)
+	if err != nil {
+		panic("couldn't insert")
+	}
+	return result.Reference
 }
